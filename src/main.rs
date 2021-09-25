@@ -1,5 +1,7 @@
 
 use bevy::prelude::*;
+use bevy_mod_picking::*;
+
 mod pieces;
 use pieces::*;
 
@@ -15,6 +17,11 @@ fn main() {
         ..Default::default()
     })
     .add_plugins(DefaultPlugins)
+    .add_plugin(PickingPlugin)
+    .add_plugin(InteractablePickingPlugin)
+    .add_plugin(HighlightablePickingPlugin)
+    .add_plugin(DebugCursorPickingPlugin)
+    .add_plugin(DebugEventsPickingPlugin)
     .add_startup_system(setup.system())
     .add_startup_system(create_board.system())
     .add_startup_system(create_pieces.system())
@@ -34,7 +41,10 @@ fn setup(
                 Vec3::new(-7.0, 20.0, 4.0),
             )),
             ..Default::default()
-        });
+            })
+            .insert_bundle(PickingCameraBundle::default());
+
+
         // Light
     commands.spawn_bundle(LightBundle {
             transform: Transform::from_translation(Vec3::new(4.0, 8.0, 4.0)),
@@ -65,7 +75,8 @@ fn create_board(
                 },
                 transform: Transform::from_translation(Vec3::new(i as f32, 0., j as f32)),
                 ..Default::default()
-            });
+            })
+            .insert_bundle(PickableBundle::default());
         }
     }
 }
